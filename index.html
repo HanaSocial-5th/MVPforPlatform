@@ -832,6 +832,10 @@ function goToPage(p){
 function field(value){
   return value ? value : `<span class="placeholder">정보없음</span>`;
 }
+function naverMapSearchUrl(d){
+  const query = [d.center, d.address].filter(Boolean).join(' ');
+  return `https://map.naver.com/p/search/${encodeURIComponent(query || d.name)}`;
+}
 
 function openModal(idx){
   const d = DATA[idx];
@@ -862,6 +866,7 @@ function openModal(idx){
       <div class="map-box" id="mapBox">
         <div class="map-fallback" id="mapFallback">지도를 불러오는 중…</div>
       </div>
+      ${d.address ? `<div class="field-row site-row"><span class="field-value"><a href="${naverMapSearchUrl(d)}" target="_blank" rel="noopener">네이버 지도에서 보기 ↗</a></span></div>` : ''}
     </div>
     <div class="modal-actions">
       <button class="btn report" onclick="openReportModal(${idx})">이 정보가 다른가요? 제보하기</button>
@@ -909,7 +914,10 @@ function initDetailMap(d){
   const bounds = new naver.maps.LatLngBounds();
 
   function placeCenterMarker(pos){
-    new naver.maps.Marker({ position: pos, map, title: d.center || d.name });
+    const marker = new naver.maps.Marker({ position: pos, map, title: d.center || d.name });
+    naver.maps.Event.addListener(marker, 'click', ()=>{
+      window.open(naverMapSearchUrl(d), '_blank', 'noopener');
+    });
     bounds.extend(pos);
     map.fitBounds(bounds);
   }
