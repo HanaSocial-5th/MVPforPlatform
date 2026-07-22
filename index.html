@@ -328,6 +328,16 @@
   .notice-modal{max-width:560px;}
   .notice-heading{font-size:14px;font-weight:700;color:var(--blue-deep);margin:18px 0 6px;}
   .notice-text{font-size:13px;color:var(--ink-soft);line-height:1.75;margin:0;}
+  .report-guide{
+    margin:0 0 16px;
+    padding:13px 15px;
+    border-radius:14px;
+    background:var(--blue-50);
+    color:var(--blue-deep);
+    font-size:15px;
+    line-height:1.55;
+    font-weight:800;
+  }
   .report-field{margin-bottom:10px;}
   .report-field label{display:block;font-size:12px;font-weight:700;color:var(--ink-soft);margin-bottom:5px;}
   .report-field input, .report-field textarea{
@@ -1254,30 +1264,30 @@ function openReportModal(idx){
     <div class="modal-head">
       <div>
         <h2>${d.name} 상담사 정보 제보</h2>
-        <div class="sub">틀린 부분만 고쳐서 알려주세요. 확인 후 반영할게요.</div>
       </div>
       <button class="close-btn" onclick="closeReportModal()">×</button>
     </div>
     <div class="modal-body">
+      <p class="report-guide">틀린 부분만 고쳐서 알려주세요. 확인 후 반영할게요.</p>
       <div class="report-field">
         <label for="rptCenter">소속 센터</label>
-        <input id="rptCenter" value="${d.center || ''}">
+        <input id="rptCenter" placeholder="새 소속 센터를 입력해주세요">
       </div>
       <div class="report-field">
         <label for="rptAddress">주소</label>
-        <input id="rptAddress" value="${d.address || ''}">
+        <input id="rptAddress" placeholder="새 주소를 입력해주세요">
       </div>
       <div class="report-field">
         <label for="rptPhone">연락처</label>
-        <input id="rptPhone" value="${d.phone || ''}">
+        <input id="rptPhone" placeholder="새 연락처를 입력해주세요">
       </div>
       <div class="report-field">
         <label for="rptSite">홈페이지</label>
-        <input id="rptSite" value="${d.site || ''}">
+        <input id="rptSite" placeholder="새 홈페이지 주소를 입력해주세요">
       </div>
       <div class="report-field">
         <label for="rptField">전문분야</label>
-        <input id="rptField" value="${(d.field && d.field !== '정보 없음') ? d.field : ''}">
+        <input id="rptField" placeholder="새 전문분야를 입력해주세요">
       </div>
       <div class="report-field">
         <label for="rptDetail">그 외 알려주실 내용</label>
@@ -1287,7 +1297,7 @@ function openReportModal(idx){
         <label for="rptEmail">회신 받을 이메일 (선택)</label>
         <input id="rptEmail" type="email" placeholder="답변받고 싶다면 입력해주세요">
       </div>
-      <p class="lead-error" id="rptError" style="display:none;">그 외 알려주실 내용을 입력하고, 위 항목 중 하나 이상을 기존 정보와 다르게 고쳐주세요.</p>
+      <p class="lead-error" id="rptError" style="display:none;">그 외 알려주실 내용을 입력해주세요.</p>
     </div>
     <div class="modal-actions">
       <button class="btn primary" onclick="submitReport(${idx})">제보 제출하기</button>
@@ -1308,17 +1318,9 @@ async function submitReport(idx){
     detail: document.getElementById('rptDetail').value.trim(),
     email: document.getElementById('rptEmail').value.trim(),
   };
-  const isDifferent = changed.center !== (d.center||'') || changed.address !== (d.address||'')
-    || changed.phone !== (d.phone||'') || changed.site !== (d.site||'')
-    || changed.field !== ((d.field && d.field !== '정보 없음') ? d.field : '') || changed.detail;
   const errorEl = document.getElementById('rptError');
   if(!changed.detail){
     errorEl.textContent = '그 외 알려주실 내용을 입력해주세요.';
-    errorEl.style.display = 'block';
-    return;
-  }
-  if(!isDifferent){
-    errorEl.textContent = '위 항목 중 하나 이상을 기존 정보와 다르게 고쳐주세요.';
     errorEl.style.display = 'block';
     return;
   }
