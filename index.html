@@ -326,6 +326,7 @@
   .ai-modal{max-width:420px;}
   .report-modal{max-width:480px;}
   .notice-modal{max-width:560px;}
+  .notice-kicker{font-size:28px;font-weight:900;line-height:1.3;color:var(--blue-deep);margin:0 0 8px;}
   .notice-heading{font-size:14px;font-weight:700;color:var(--blue-deep);margin:18px 0 6px;}
   .notice-text{font-size:13px;color:var(--ink-soft);line-height:1.75;margin:0;}
   .report-guide{
@@ -1372,6 +1373,7 @@ function renderNotice(){
   document.getElementById('noticeModal').innerHTML = `
     <div class="modal-head">
       <div>
+        <p class="notice-kicker">서울지역 검증된 상담사 ${DATA.length}명</p>
         <h2>들어가기 전에 안내드려요</h2>
       </div>
       <button class="close-btn" onclick="closeNotice()">×</button>
