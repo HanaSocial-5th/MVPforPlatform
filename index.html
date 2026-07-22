@@ -338,6 +338,7 @@
     line-height:1.55;
     font-weight:800;
   }
+  .report-guide-emphasis{color:#E5484D;}
   .report-field{margin-bottom:10px;}
   .report-field label{display:block;font-size:12px;font-weight:700;color:var(--ink-soft);margin-bottom:5px;}
   .report-field input, .report-field textarea{
@@ -1268,7 +1269,7 @@ function openReportModal(idx){
       <button class="close-btn" onclick="closeReportModal()">×</button>
     </div>
     <div class="modal-body">
-      <p class="report-guide">틀린 부분만 고쳐서 알려주세요. 확인 후 반영할게요.</p>
+      <p class="report-guide"><span class="report-guide-emphasis">틀린 부분</span>만 고쳐서 알려주세요. 확인 후 반영할게요.</p>
       <div class="report-field">
         <label for="rptCenter">소속 센터</label>
         <input id="rptCenter" placeholder="새 소속 센터를 입력해주세요">
