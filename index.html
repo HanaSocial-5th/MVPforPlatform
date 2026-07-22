@@ -356,12 +356,14 @@
 <!-- Netlify Forms 감지용 정적 히든 폼 (빌드 시 Netlify가 이 raw HTML을 스캔해서 폼을 등록합니다.
      실제 제출은 JS에서 fetch로 처리하고, 이 폼 자체는 화면에 표시되지 않습니다.) -->
 <form name="ai-lead" method="POST" data-netlify="true" netlify-honeypot="bot-field" hidden>
+  <input type="hidden" name="form-name" value="ai-lead" />
   <input type="text" name="bot-field" />
   <input type="email" name="email" />
   <input type="tel" name="phone" />
   <input type="text" name="submitted-at" />
 </form>
 <form name="report" method="POST" data-netlify="true" netlify-honeypot="bot-field" hidden>
+  <input type="hidden" name="form-name" value="report" />
   <input type="text" name="bot-field" />
   <input type="text" name="counselor-name" />
   <input type="text" name="counselor-index" />
@@ -1187,7 +1189,11 @@ function showAINotice(){
 }
 
 function netlifySubmit(formName, fields){
-  const body = new URLSearchParams({ 'form-name': formName, ...fields }).toString();
+  const body = new URLSearchParams({
+    'form-name': formName,
+    'bot-field': '',
+    ...fields
+  }).toString();
   return fetch('/', {
     method: 'POST',
     headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
