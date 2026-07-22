@@ -353,6 +353,25 @@
 </style>
 </head>
 <body>
+<!-- Netlify Forms 감지용 정적 히든 폼 (빌드 시 Netlify가 이 raw HTML을 스캔해서 폼을 등록합니다.
+     실제 제출은 JS에서 fetch로 처리하고, 이 폼 자체는 화면에 표시되지 않습니다.) -->
+<form name="ai-lead" data-netlify="true" netlify-honeypot="bot-field" hidden>
+  <input type="text" name="bot-field" />
+  <input type="email" name="email" />
+  <input type="tel" name="phone" />
+</form>
+<form name="report" data-netlify="true" netlify-honeypot="bot-field" hidden>
+  <input type="text" name="bot-field" />
+  <input type="text" name="counselor-name" />
+  <input type="text" name="counselor-index" />
+  <input type="text" name="center" />
+  <input type="text" name="address" />
+  <input type="text" name="phone" />
+  <input type="text" name="site" />
+  <input type="text" name="field" />
+  <input type="text" name="detail" />
+  <input type="email" name="email" />
+</form>
 <div class="blob blob-1" aria-hidden="true"></div>
 <div class="blob blob-2" aria-hidden="true"></div>
 <div class="blob blob-3" aria-hidden="true"></div>
@@ -448,7 +467,7 @@
   네이버 클라우드 플랫폼(ncloud.com) > Maps > Application에서 발급받은 Client ID를 사용합니다.
   submodules=geocoder 파라미터가 있어야 주소→좌표 변환(Geocoding)이 동작합니다.
 -->
-<script type="text/javascript" src="https://oapi.map.naver.com/openapi/v3/maps.js?ncpKeyId=dyn08tzzh0&submodules=geocoder"></script>
+<script type="text/javascript" src="https://oapi.map.naver.com/openapi/v3/maps.js?ncpKeyId=946w2mujdi&submodules=geocoder"></script>
 
 <script>
 // status는 내부 운영용 필드입니다 (UI에는 노출하지 않음). 값이 없는 필드는 상세보기에서 "정보없음"으로 표시합니다.
@@ -1165,7 +1184,16 @@ function showAINotice(){
   `;
 }
 
-function submitLead(){
+function netlifySubmit(formName, fields){
+  const body = new URLSearchParams({ 'form-name': formName, ...fields }).toString();
+  return fetch('/', {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
+    body
+  });
+}
+
+async function submitLead(){
   const email = document.getElementById('leadEmail').value.trim();
   const phone = document.getElementById('leadPhone').value.trim();
   const errorEl = document.getElementById('leadError');
@@ -1179,6 +1207,9 @@ function submitLead(){
     const leads = JSON.parse(localStorage.getItem('maeum_leads') || '[]');
     leads.push({email, phone, ts: new Date().toISOString()});
     localStorage.setItem('maeum_leads', JSON.stringify(leads));
+  }catch(e){}
+  try{
+    await netlifySubmit('ai-lead', { email, phone });
   }catch(e){}
   document.getElementById('aiModal').innerHTML = `
     <div class="modal-head">
@@ -1252,7 +1283,7 @@ function openReportModal(idx){
   document.getElementById('reportOverlay').classList.add('open');
 }
 
-function submitReport(idx){
+async function submitReport(idx){
   const d = DATA[idx];
   const changed = {
     center: document.getElementById('rptCenter').value.trim(),
@@ -1274,6 +1305,13 @@ function submitReport(idx){
     const reports = JSON.parse(localStorage.getItem('maeum_reports') || '[]');
     reports.push({ name: d.name, idx, ...changed, ts: new Date().toISOString() });
     localStorage.setItem('maeum_reports', JSON.stringify(reports));
+  }catch(e){}
+  try{
+    await netlifySubmit('report', {
+      'counselor-name': d.name,
+      'counselor-index': String(idx),
+      ...changed
+    });
   }catch(e){}
   document.getElementById('reportModal').innerHTML = `
     <div class="modal-head">
